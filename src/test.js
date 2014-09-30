@@ -31,29 +31,44 @@ function interaction() {
 //interid = setInterval(interaction, 1000);
 setTimeout(interaction, 1000);*/
 
-// navigator screen
-(function(){
+// navigator screen history doucument
+/*(function(){
      var div_str;
      var prediv = document.getElementById("main");
      //for(var i in window.navigator){
-     for(var i in window.history){
+     for(var i in window.document){
          //div_str = i + " " + window.navigator[i];
          //div_str = i + " " + window.screen[i];
-         div_str = i + " " + window.history[i];
-         var para = document.createElement("p");
-         var node = document.createTextNode(div_str);
-         para.appendChild(node);
+         if (typeof window.document[i] == "string" ){
+             div_str = i + " " + window.document[i];
+             var para = document.createElement("p");
+             var node = document.createTextNode(div_str);
+             para.appendChild(node);
 
-         prediv.appendChild(para);
+             prediv.appendChild(para);
+         }
+
      }
 
+})();*/
+
+(function(){
+    var element = document.getElementById("div1");
+    document.writeln(element.tagName);
+    document.writeln(element.getAttribute("id"));
+    element.setAttribute("TITLE", "zhangkai");
+    document.writeln(element.title);
+    document.writeln(element.getAttribute("title"));
 })();
 
+// documentElement
+/*(function(){
+    var de = document.documentElement;
+    for(var i in de){
+        //alert(i + " "+de[i]);
+    }
+    alert(document.body.innerHTML);
+})();*/
 
 
-
-
-
-
-document.write("zhangkai");
 
