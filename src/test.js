@@ -52,14 +52,27 @@ setTimeout(interaction, 1000);*/
 
 })();*/
 
-(function(){
+/*(function(){
     var element = document.getElementById("div1");
     document.writeln(element.tagName);
     document.writeln(element.getAttribute("id"));
     element.setAttribute("TITLE", "zhangkai");
     document.writeln(element.title);
     document.writeln(element.getAttribute("title"));
-})();
+})();*/
+/*
+(function(){
+    var supportsDOM2Core = document.implementation.hasFeature("Core", "2.0");
+    var supportsDOM3Core = document.implementation.hasFeature("Core", "3.0");
+    var supportsDOM2Html = document.implementation.hasFeature("HTML", "2.0");
+    var supportsDOM2View = document.implementation.hasFeature("Views", "2.0");
+    var supportsDOM2XML = document.implementation.hasFeature("XML", "2.0");
+    document.writeln(" supportsDOM2Core " + supportsDOM2Core);
+    document.writeln(" supportsDOM3Core " + supportsDOM3Core);
+    document.writeln(" supportsDOM2HTML " + supportsDOM2Html);
+    document.writeln(" supportsDOM2Views " + supportsDOM2View);
+    document.writeln(" supportsDOM2XML" + supportsDOM2XML);
+})()*/;
 
 // documentElement
 /*(function(){
@@ -70,5 +83,18 @@ setTimeout(interaction, 1000);*/
     alert(document.body.innerHTML);
 })();*/
 
+// css / style
+(function () {
+    var myDiv = document.getElementById("div1");
+    myDiv.style.background = "#50ffff";
+    myDiv.style.width = "100px";
+    myDiv.style.height = "200px";
+    myDiv.style.border = "5px solid black";
 
-
+    document.writeln(myDiv.style.cssText + " " + myDiv.style.length);
+    for(var i = 0, len = myDiv.style.length; i < len; i++){
+        document.writeln("|");
+        document.writeln(".."+myDiv.style.item(i) + " " + myDiv.style.getPropertyCSSValue(myDiv.style.item(i))+"..");
+    }
+    myDiv.style.removeProperty("border");
+})();
