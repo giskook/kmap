@@ -9,6 +9,11 @@ var kMap = {
 
     name : "default",
 
+    centerdegree : {
+        x : 0,
+        y : 0
+    },
+
     center : {
         x : 0,
         y : 0
@@ -22,6 +27,13 @@ var kMap = {
       bottom : -20037508.3427892,
       top :     20037508.3427892,
       right :   20037508.3427892
+    },
+
+    worlddegreebounds : {
+        left : -180,
+        bottom : -85.05112877980659,
+        top : 85.05112877980659,
+        right : 180
     },
 
     tilesize : 256,
@@ -85,7 +97,11 @@ var kMap = {
 
     setMap : function(name, center, level){
         this.name = name;
-        this.center = center;
+        this.centerdegree = center;
+        // 111319.49079327333 235593.67912288825
+        // worldbounds.width/360 worldbounds.height/worlddegreebounds.height
+        this.center.x = (center.x - this.worlddegreebounds.left)*111319.49079327333;
+        this.center.y = (center.y - this.worlddegreebounds.bottom)*235593.67912288825;
         this.level = level;
     },
     

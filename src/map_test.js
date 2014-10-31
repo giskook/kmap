@@ -24,7 +24,19 @@
 //        document.writeln(Math.pow(2,i)*256);
 //    }
 
-    for(var i in kMap.worldsidetiles){
-        document.writeln(kMap.worldsidetiles[i]*kMap.worldsidetiles[i]);
-    }
+//    for(var i in kMap.worldsidetiles){
+//        document.writeln(kMap.worldsidetiles[i]*kMap.worldsidetiles[i]);
+//    }
+    kMap.setMap("main",{x:55,y:55},17);
+    kMap.setPixelBounds(0,0,600,600);
+    kMap.getViewBounds();
+    document.writeln(kMap.geobounds.top);
+    document.writeln(kMap.geobounds.bottom);
+    document.writeln(kMap.geobounds.left);
+    document.writeln(kMap.geobounds.right);
+
+
+    /*document.writeln((kMap.worldbounds.right - kMap.worldbounds.left)/360);
+    document.writeln((kMap.worldbounds.top - kMap.worldbounds.bottom)/(kMap.worlddegreebounds.top-kMap.worlddegreebounds.bottom));*/
+
 })();
