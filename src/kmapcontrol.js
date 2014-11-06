@@ -4,11 +4,13 @@
 
 $(document).ready(function(){
     var bigImg = document.createElement("img");     //创建一个img元素
-    bigImg.width = "256";
-    bigImg.height = "256";
-    bigImg.style.left = 1000;
+    bigImg.style.width  = '256px';
+    bigImg.style.height = '256px';
 
-    bigImg.src = "http://192.168.1.155/images/1.png";
+    bigImg.style.position = 'absolute';
+    bigImg.style.top  = "0px";
+    bigImg.style.left = "0px";
+    bigImg.src = "http://online1.map.bdimg.com/tile/?qt=tile&x=0&y=0&z=4&styles=pl&udt=20141102";
     document.getElementById('div1').appendChild(bigImg);
 
  });
