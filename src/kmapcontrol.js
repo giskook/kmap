@@ -23,11 +23,24 @@ var kMapControl = {
         var center = mapproperty.center;
         var pixelbounds = mapproperty.pixelbounds;
         kMap.setMap(container, center, level);
+        document.write(kMap.center.x);
+        document.write(" ");
+        document.write(kMap.center.y);
+        document.write(" ");
         kMap.setPixelBounds(pixelbounds.left, pixelbounds.top,pixelbounds.right, pixelbounds.bottom);
         var geobounds  = kMap.getViewBounds();
         var viewtiles = kMap.getViewTiles();
         var pixeloutside = kMap.getPixelOutSide();
+        document.write(geobounds.left);
+        document.write(" ");
+        document.write(geobounds.top);
+        document.write(" ");
+        document.write(geobounds.right);
+        document.write(" ");
+        document.write(geobounds.bottom);
+        document.write(" ");
         document.write(viewtiles.startx);
+
         document.write(" ");
         document.write(viewtiles.endx);
         document.write(" ");

@@ -98,11 +98,11 @@ var kMap = {
     setMap : function(name, center, level){
         this.name = name;
         this.centerdegree = center;
+        this.level = level;
         // 111319.49079327333 235593.67912288825
         // worldbounds.width/360 worldbounds.height/worlddegreebounds.height
-        this.center.x = (center.x - this.worlddegreebounds.left)*111319.49079327333;
-        this.center.y = (center.y - this.worlddegreebounds.bottom)*235593.67912288825;
-        this.level = level;
+        this.center.x = (center.x - this.worlddegreebounds.left)*this.worldpixels[this.level]/(this.worlddegreebounds.right - this.worlddegreebounds.left);
+        this.center.y = (center.y - this.worlddegreebounds.bottom)*this.worldpixels[this.level]/(this.worlddegreebounds.top - this.worlddegreebounds.bottom);
     },
     
     getViewBounds : function () {
