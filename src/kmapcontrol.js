@@ -2,6 +2,31 @@
  * Created by z on 2014/10/31.
  */
 var kMapControl = {
+
+
+
+    mousedown : 1,
+
+    mouseup : 2,
+
+    mousemove : 4,
+
+    click : 8,
+
+    dbclick : 16,
+
+    action : 0,
+
+    mousedownpos : {
+        x : 0,
+        y : 0
+    },
+
+    mousemovepos : {
+        x : 0,
+        y : 0
+    },
+
     setImg : function(imgproperty){
         var divcontainer = imgproperty.container;
         var div = document.createElement("div");
@@ -45,11 +70,41 @@ var kMapControl = {
             ++ii;
             jj = 0;
         }
+    },
 
+    refreshMap : function(){
+        var viewtiles = kMap.viewtiles;
+        var pixeloutside = kMap.pixeloutside;
+
+        var ii = 0;
+        var jj = 0;
+        for(var i = viewtiles.starty; i < viewtiles.endy; ++i){
+            for(var j = viewtiles.startx; j < viewtiles.endx; ++j){
+                kMapControl.setImg({
+                    container : kMap.name,
+                    width : "256px",
+                    height : "256px",
+                    top : (ii*256-pixeloutside.height)+"px",
+                    left : (jj*256-pixeloutside.width)+"px",
+                    src : "http://online1.map.bdimg.com/tile/?qt=tile&x=0&y=0&z=4&styles=pl&udt=20141102"
+                });
+                ++jj;
+            }
+            ++ii;
+            jj = 0;
+        }
+    },
+
+    pan : function(pixeloffset){
+        prompt(pixeloffset.x);
+        kMap.pan(pixeloffset);
+
+        this.refreshMap();
     }
 };
 
 $(document).ready(function(){
+    document.body.parentNode.style.overflow="hidden";
     kMapControl.setMap({
         container : "div1",
         level : 20,
@@ -65,3 +120,51 @@ $(document).ready(function(){
         }
     });
  });
+
+$(window).resize(function(){
+    kMapControl.setMap({
+        container : "div1",
+        level : 20,
+        center : {
+            x : 127,
+            y : 34
+        },
+        pixelbounds : {
+            left: document.documentElement.clientLeft,
+            top : document.documentElement.clientTop,
+            right : document.documentElement.clientLeft + document.documentElement.clientWidth,
+            bottom : document.documentElement.clientTop + document.documentElement.clientHeight
+        }
+    });
+});
+
+$(window).mousedown(function(){
+    kMapControl.mousedownpos.x = window.event.x;
+    kMapControl.mousedownpos.y = window.event.y;
+
+    kMapControl.action |= kMapControl.mousedown;
+    kMapControl.action &= ~kMapControl.mouseup;
+});
+
+$(window).mouseup(function(){
+    kMapControl.action |= kMapControl.mouseup;
+    kMapControl.action &= ~kMapControl.mousedown;
+});
+
+$(window).mousemove(function(){
+    kMapControl.action |= kMapControl.mousemove;
+    //if(kMapControl.action & kMapControl.mousedown){
+
+        kMapControl.mousemovepos.x = window.event.x;
+        kMapControl.mousemovepos.y = window.event.y;
+
+            kMapControl.pan({
+                x : (kMapControl.mousemovepos.x - kMapControl.mousedownpos.x),
+                y : (kMapControl.mousedownpos.y - kMapControl.mousedownpos.y)
+            });
+
+    //}
+});
+
+
+

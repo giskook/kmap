@@ -140,6 +140,19 @@ var kMap = {
         return this.pixeloutside;
     },
 
+    pan : function (pixeloffset) {
+        var detalx = Math.floor(pixeloffset.x/256);
+        var detalpixelx = Math.ceil(pixeloffset.x%256);
+        var detaly = Math.floor(pixeloffset.y/256);
+        var detalpixely = Math.ceil(pixeloffset.y%256);
+        this.viewtiles.startx += detalx;
+        this.viewtiles.endx += detalx;
+        this.viewtiles.starty += detaly;
+        this.viewtiles.endy += detaly;
+        this.pixelbounds.width += detalpixelx;
+        this.pixelbounds.height += detalpixely;
+    },
+
     getTileURL : function(){
 
     }
