@@ -23,7 +23,7 @@ var kMap = {
 
     // 20037508.3427892表示地图周长的一半，以地图中心点做为（0，0）坐标。
     worldbounds : {
-      left :   -20037508.3427892,
+      left:   -20037508.3427892,
       bottom : -20037508.3427892,
       top :     20037508.3427892,
       right :   20037508.3427892
@@ -40,9 +40,11 @@ var kMap = {
 
     levels : [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22],
 
-    worldpixels : [256,512,1024,2048,4096,8192,16384,32768,65536,131072,262144,524288,1048576,2097152,4194304,8388608,16777216,33554432,67108864,134217728,268435456,536870912,1073741824],
+    worldpixels : [256,512,1024,2048,4096,8192,16384,32768,65536,131072,262144,524288,1048576,
+        2097152,4194304,8388608,16777216,33554432,67108864,134217728,268435456,536870912,1073741824],
 
-    worldsidetiles : [1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536,131072,262144,524288,1048576,2097152,4194304],
+    worldsidetiles : [1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536,
+        131072,262144,524288,1048576,2097152,4194304],
 
     //    20037508.3427892 * 2 / 256 / (Math.pow(2,level));
     resolution : [156543.03392804062,78271.51696402031,39135.758482010155,
@@ -92,7 +94,7 @@ var kMap = {
         return {
             width : this.pixelbounds.right - this.pixelbounds.left,
             height : this.pixelbounds.bottom - this.pixelbounds.top
-        }
+        };
     },
 
     setMap : function(name, center, level){
@@ -101,8 +103,11 @@ var kMap = {
         this.level = level;
         // 111319.49079327333 235593.67912288825
         // worldbounds.width/360 worldbounds.height/worlddegreebounds.height
-        this.center.x = (center.x - this.worlddegreebounds.left)*this.worldpixels[this.level]/(this.worlddegreebounds.right - this.worlddegreebounds.left);
-        this.center.y = (center.y - this.worlddegreebounds.bottom)*this.worldpixels[this.level]/(this.worlddegreebounds.top - this.worlddegreebounds.bottom);
+
+        //this.center.x = (center.x - this.worlddegreebounds.left)*this.worldpixels[this.level]/(this.worlddegreebounds.right - this.worlddegreebounds.left)-this.worldpixels[this.level]/2;
+        //this.center.y = (center.y - this.worlddegreebounds.bottom)*this.worldpixels[this.level]/(this.worlddegreebounds.top - this.worlddegreebounds.bottom)-this.worldpixels[this.level]/2;
+        this.center.x = (center.x / 180) * this.worldbounds.right;
+        this.center.y = (center.y / this.worlddegreebounds.top) * this.worldbounds.top;
     },
     
     getViewBounds : function () {
@@ -118,20 +123,21 @@ var kMap = {
     },
 
     getViewTiles : function () {
+
         this.viewtiles.level = this.level;
         this.viewtiles.startx = Math.floor(((this.geobounds.left - this.worldbounds.left) / this.resolution[this.level]) / 256);
         this.viewtiles.starty = Math.floor(((this.worldbounds.top - this.geobounds.top) / this.resolution[this.level]) / 256);
         this.viewtiles.endx = Math.ceil(((this.geobounds.right - this.worldbounds.left) / this.resolution[this.level]) / 256);
-        this.viewtiles.endy = Math.ceil(((this.geobounds.top - this.worldbounds.top) / this.resolution[this.level]) / 256);
+        this.viewtiles.endy = Math.ceil(((this.worldbounds.top - this.geobounds.bottom) / this.resolution[this.level]) / 256);
 
         return this.viewtiles;
     },
 
     getPixelOutSide : function(){
-        this.pixeloutside.width = ((this.geobounds.left - this.worldbounds.left) / this.resolution[this.level]) % 256;
-        this.pixeloutside.height = ((this.worldbounds.top - this.geobounds.top) / this.resolution[this.level]) % 256;
+        this.pixeloutside.width = Math.floor((this.geobounds.left - this.worldbounds.left) / this.resolution[this.level]) % 256;
+        this.pixeloutside.height = Math.floor((this.worldbounds.top - this.geobounds.top) / this.resolution[this.level]) % 256;
 
-        return this.pixelbounds;
+        return this.pixeloutside;
     },
 
     getTileURL : function(){
