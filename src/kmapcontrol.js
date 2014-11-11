@@ -53,6 +53,14 @@ var kMapControl = {
 
         var ii = 0;
         var jj = 0;
+        kMapControl.setImg({
+            container : container,
+            width : "256px",
+            height : "256px",
+            top : (ii*256-pixeloutside.height)+"px",
+            left : (jj*256-pixeloutside.width)+"px",
+            src : "http://online1.map.bdimg.com/tile/?qt=tile&x=0&y=0&z=4&styles=pl&udt=20141102"
+        });
         for(var i = viewtiles.starty; i < viewtiles.endy; ++i){
             for(var j = viewtiles.startx; j < viewtiles.endx; ++j){
                 kMapControl.setImg({
@@ -97,11 +105,37 @@ var kMapControl = {
         kMap.pan(pixeloffset);
 
         this.refreshMap();
+    },
+
+    onmousemove : function (ev) {
+        ev = ev || event;
+        this.mousemovepos.x = ev.x;
+        this.mousedownpos.y = ev.y;
+        this.action |=this.mousemove;
+        this.pan({
+            x : (this.mousemovepos.x - this.mousedownpos.x),
+            y : (this.mousemovepos.y - this.mousedownpos.y)
+        });
+    },
+
+    onmousedown : function(ev){
+        ev = ev || window.event;
+        this.mousedownpos.x = ev.clientX;
+        this.mousedownpos.y = ev.clientY;
+        this.action |= this.mousedown;
+
+    },
+
+    onmouseup : function(ev){
+        ev = ev || event;
+        this.action |= this.mouseup;
+        this.action &= ~this.mousedown;
     }
 };
 
-$(document).ready(function(){
+$(window).load(function(){
     document.body.parentNode.style.overflow="hidden";
+    console.log("should not here");
     kMapControl.setMap({
         container : "div1",
         level : 20,
@@ -116,9 +150,11 @@ $(document).ready(function(){
             bottom : document.documentElement.clientTop + document.documentElement.clientHeight
         }
     });
+
  });
 
 $(window).resize(function(){
+    console.log("should not here2");
     kMapControl.setMap({
         container : "div1",
         level : 20,
@@ -135,32 +171,21 @@ $(window).resize(function(){
     });
 });
 
-$(window).mousedown(function(){
-    kMapControl.mousedownpos.x = window.event.x;
-    kMapControl.mousedownpos.y = window.event.y;
-
-    kMapControl.action |= kMapControl.mousedown;
-    kMapControl.action &= ~kMapControl.mouseup;
+$('#div1').mousedown(function(ev){
+    //kMapControl.onmousedown(ev);
+    console.log("mousedown");
 });
 
-$(window).mouseup(function(){
-    kMapControl.action |= kMapControl.mouseup;
-    kMapControl.action &= ~kMapControl.mousedown;
+$('#div1').mousemove(function(ev){
+    //kMapControl.onmousemove(ev);
+    console.log("mousemove")
 });
 
-$(window).mousemove(function(){
-    kMapControl.action |= kMapControl.mousemove;
-    console.log(Date.now());
-    if(kMapControl.action & kMapControl.mousedown){
-        kMapControl.mousemovepos.x = window.event.x;
-        kMapControl.mousemovepos.y = window.event.y;
-        kMapControl.pan({
-            x : (kMapControl.mousemovepos.x - kMapControl.mousedownpos.x),
-            y : (kMapControl.mousemovepos.y - kMapControl.mousedownpos.y)
-        });
-
-    }
+$('#div1').mouseup(function(ev){
+//    kMapControl.onmouseup(ev);
+    console.log("mouseup");
 });
+
 
 
 
