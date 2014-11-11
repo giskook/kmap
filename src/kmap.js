@@ -141,16 +141,19 @@ var kMap = {
     },
 
     pan : function (pixeloffset) {
-        var detalx = Math.floor(pixeloffset.x/256);
-        var detalpixelx = Math.ceil(pixeloffset.x%256);
-        var detaly = Math.floor(pixeloffset.y/256);
-        var detalpixely = Math.ceil(pixeloffset.y%256);
+        var detalx = Math.floor(Math.abs(pixeloffset.x-this.pixeloutside.width)/256);
+        var detalpixelx = Math.ceil(Math.abs(pixeloffset.x-this.pixeloutside.width)%256)
+        var detaly = Math.floor(Math.abs(pixeloffset.y-this.pixeloutside.height)/256);
+        var detalpixely = Math.ceil(Math.abs(pixeloffset.y-this.pixeloutside.height)%256);
         this.viewtiles.startx += detalx;
         this.viewtiles.endx += detalx;
         this.viewtiles.starty += detaly;
         this.viewtiles.endy += detaly;
-        this.pixelbounds.width += detalpixelx;
-        this.pixelbounds.height += detalpixely;
+        this.pixeloutside.width += detalpixelx;
+        this.pixeloutside.height += detalpixely;
+        this.pixeloutside.width = this.pixeloutside.width % 256;
+        this.pixeloutside.height = this.pixeloutside.height % 256;
+
     },
 
     getTileURL : function(){

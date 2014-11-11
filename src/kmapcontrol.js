@@ -3,8 +3,6 @@
  */
 var kMapControl = {
 
-
-
     mousedown : 1,
 
     mouseup : 2,
@@ -75,7 +73,6 @@ var kMapControl = {
     refreshMap : function(){
         var viewtiles = kMap.viewtiles;
         var pixeloutside = kMap.pixeloutside;
-
         var ii = 0;
         var jj = 0;
         for(var i = viewtiles.starty; i < viewtiles.endy; ++i){
@@ -96,7 +93,7 @@ var kMapControl = {
     },
 
     pan : function(pixeloffset){
-        prompt(pixeloffset.x);
+
         kMap.pan(pixeloffset);
 
         this.refreshMap();
@@ -153,17 +150,16 @@ $(window).mouseup(function(){
 
 $(window).mousemove(function(){
     kMapControl.action |= kMapControl.mousemove;
-    //if(kMapControl.action & kMapControl.mousedown){
-
+    console.log(Date.now());
+    if(kMapControl.action & kMapControl.mousedown){
         kMapControl.mousemovepos.x = window.event.x;
         kMapControl.mousemovepos.y = window.event.y;
+        kMapControl.pan({
+            x : (kMapControl.mousemovepos.x - kMapControl.mousedownpos.x),
+            y : (kMapControl.mousemovepos.y - kMapControl.mousedownpos.y)
+        });
 
-            kMapControl.pan({
-                x : (kMapControl.mousemovepos.x - kMapControl.mousedownpos.x),
-                y : (kMapControl.mousedownpos.y - kMapControl.mousedownpos.y)
-            });
-
-    //}
+    }
 });
 
 
