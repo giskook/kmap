@@ -25,12 +25,66 @@ var kMapControl = {
         y : 0
     },
 
+    container : {
+        div : {},
+        img : {},
+        cellcount : 0,
+        xcount : 0,
+        ycount : 0
+    },
+
+    initMap : function(controlproperty){
+        var imgsize = controlproperty.imagesize;
+        var container = controlproperty.container;
+        var width = Math.floor(document.documentElement.clientWidth/imgsize);
+        var height = Math.floor(document.documentElement.clientHeight/imgsize);
+        if(width > this.container.xcount){
+            for(var i = this.container.xcount; i < width; ++i){
+                for(var j = 0; j < height; ++j){
+                    if(typeof this.container.div[i.toString() + j.toString()] === "undefined"){
+                        this.container.div[i.toString() + j.toString()] = document.createElement("div");
+                        document.getElementById(container).appendChild(this.container.div[i.toString() + j.toString()]);
+                    }
+                    if(typeof this.container.img[i.toString() + j.toString()] === "undefined" ){
+                        this.container.img[i.toString() + j.toString()] = document.createElement("img");
+                    }
+                    this.container.div[i.toString() + j.toString()].id = i.toString() + j.toString();
+                    this.container.img[i.toString() + j.toString()].id = i.toString() + j.toString();
+                    if(this.container.div[i.toString() + j.toString()].hasChildNodes() === false){
+                        this.container.div[i.toString() + j.toString()].appendChild(this.container.img[i.toString() + j.toString()]);
+                    }
+                }
+            }
+        }
+        this.container.width = width;
+
+        if(height > this.container.ycount){
+            for(var i = 0; i < width; ++i){
+                for(var j = this.container.ycount; i < height; ++i){
+                    if(typeof this.container.div[i.toString() + j.toString()] === "undefined"){
+                        this.container.div[i.toString() + j.toString()] = document.createElement("div");
+                    }
+                    if(typeof this.container.img[i.toString() + j.toString()] === "undefined" ){
+                        this.container.img[i.toString() + j.toString()] = document.createElement("img");
+                    }
+                    this.container.div[i.toString() + j.toString()].id = i.toString() + j.toString();
+                    this.container.img[i.toString() + j.toString()].id = i.toString() + j.toString();
+                    if(this.container.div[i.toString() + j.toString()].hasChildNodes() === false){
+                        this.container.div[i.toString() + j.toString()].appendChild(this.container.img[i.toString() + j.toString()]);
+                    }
+                }
+            }
+        }
+        this.container.ycount = height;
+        this.container.cellcount = height*width;
+    },
+
     setImg : function(imgproperty){
         var divcontainer = imgproperty.container;
-        var div = document.createElement("div");
-        var img = document.createElement("img");
-        document.getElementById(divcontainer).appendChild(div);
+
+        document.getElementById(divcontainer).appendChild(this.container.div["00"]);
         div.appendChild(img);
+
 
         img.style.width  = imgproperty.width;
         img.style.height = imgproperty.height;
@@ -53,14 +107,6 @@ var kMapControl = {
 
         var ii = 0;
         var jj = 0;
-        kMapControl.setImg({
-            container : container,
-            width : "256px",
-            height : "256px",
-            top : (ii*256-pixeloutside.height)+"px",
-            left : (jj*256-pixeloutside.width)+"px",
-            src : "http://online1.map.bdimg.com/tile/?qt=tile&x=0&y=0&z=4&styles=pl&udt=20141102"
-        });
         for(var i = viewtiles.starty; i < viewtiles.endy; ++i){
             for(var j = viewtiles.startx; j < viewtiles.endx; ++j){
                 kMapControl.setImg({
@@ -75,6 +121,28 @@ var kMapControl = {
             }
             ++ii;
             jj = 0;
+        }
+    },
+
+    eventutil : {
+        addHandler : function(element, type, handler){
+            if(element.addEventListener){
+                element.addEventListener(type, handler, false);
+            }else if(element.attachEvent){
+                element.attachEvent("on"+type, handler);
+            }else {
+                element["on"+type] = handler;
+            }
+        },
+
+        removeHandler : function(element, type, handler){
+            if(element.removeEventListener){
+                element.removeEventListener(type, handler, false);
+            }else if(element.detachEvent){
+                element.detachEvent("on"+type, handler);
+            }else{
+                element["on"+type] = null;
+            }
         }
     },
 
@@ -135,7 +203,10 @@ var kMapControl = {
 
 $(window).load(function(){
     document.body.parentNode.style.overflow="hidden";
-    console.log("should not here");
+    kMapControl.initMap({
+        imagesize : 256,
+        container : "div1"
+    });
     kMapControl.setMap({
         container : "div1",
         level : 20,
@@ -150,11 +221,12 @@ $(window).load(function(){
             bottom : document.documentElement.clientTop + document.documentElement.clientHeight
         }
     });
+
+    console.log(document.getElementById("div1"));
 
  });
 
 $(window).resize(function(){
-    console.log("should not here2");
     kMapControl.setMap({
         container : "div1",
         level : 20,
@@ -171,21 +243,20 @@ $(window).resize(function(){
     });
 });
 
-$('#div1').mousedown(function(ev){
+$(document).mousedown(function(ev){
     //kMapControl.onmousedown(ev);
     console.log("mousedown");
 });
 
-$('#div1').mousemove(function(ev){
+$(document).mousemove(function(ev){
     //kMapControl.onmousemove(ev);
     console.log("mousemove")
 });
 
-$('#div1').mouseup(function(ev){
+$(document).mouseup(function(ev){
 //    kMapControl.onmouseup(ev);
     console.log("mouseup");
 });
-
 
 
 
