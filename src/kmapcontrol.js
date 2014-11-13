@@ -36,8 +36,8 @@ var kMapControl = {
     initMap : function(controlproperty){
         var imgsize = controlproperty.imagesize;
         var container = controlproperty.container;
-        var width = Math.floor(document.documentElement.clientWidth/imgsize);
-        var height = Math.floor(document.documentElement.clientHeight/imgsize);
+        var width = Math.floor((document.documentElement.clientWidth+imgsize*2)/imgsize);
+        var height = Math.floor((document.documentElement.clientHeight+imgsize*2)/imgsize);
         if(width > this.container.xcount){
             for(var i = this.container.xcount; i < width; ++i){
                 for(var j = 0; j < height; ++j){
@@ -79,21 +79,6 @@ var kMapControl = {
         this.container.cellcount = height*width;
     },
 
-    setImg : function(imgproperty){
-        var divcontainer = imgproperty.container;
-
-        document.getElementById(divcontainer).appendChild(this.container.div["00"]);
-        div.appendChild(img);
-
-
-        img.style.width  = imgproperty.width;
-        img.style.height = imgproperty.height;
-        img.style.position = "absolute";
-        img.style.top  = imgproperty.top;
-        img.style.left = imgproperty.left;
-        img.src = imgproperty.src;
-    },
-
     setMap : function(mapproperty){
         var container = mapproperty.container;
         var level = mapproperty.level;
@@ -101,7 +86,7 @@ var kMapControl = {
         var pixelbounds = mapproperty.pixelbounds;
         kMap.setMap(container, center, level);
         kMap.setPixelBounds(pixelbounds.left, pixelbounds.top,pixelbounds.right, pixelbounds.bottom);
-        var geobounds  = kMap.getViewBounds();
+        kMap.getViewBounds();
         var viewtiles = kMap.getViewTiles();
         var pixeloutside = kMap.getPixelOutSide();
 
@@ -109,14 +94,12 @@ var kMapControl = {
         var jj = 0;
         for(var i = viewtiles.starty; i < viewtiles.endy; ++i){
             for(var j = viewtiles.startx; j < viewtiles.endx; ++j){
-                kMapControl.setImg({
-                    container : container,
-                    width : "256px",
-                    height : "256px",
-                    top : (ii*256-pixeloutside.height)+"px",
-                    left : (jj*256-pixeloutside.width)+"px",
-                    src : "http://online1.map.bdimg.com/tile/?qt=tile&x=0&y=0&z=4&styles=pl&udt=20141102"
-                });
+                kMapControl.container.img[jj.toString()+ii.toString()].style.position = "absolute";
+                kMapControl.container.img[jj.toString()+ii.toString()].style.width = "256px";
+                kMapControl.container.img[jj.toString()+ii.toString()].style.height = "256px";
+                kMapControl.container.img[jj.toString()+ii.toString()].style.top = (ii*256-pixeloutside.height).toString()+"px";
+                kMapControl.container.img[jj.toString()+ii.toString()].style.left = (jj*256-pixeloutside.width).toString()+"px";
+                kMapControl.container.img[jj.toString()+ii.toString()].src = "http://online1.map.bdimg.com/tile/?qt=tile&x=0&y=0&z=4&styles=pl&udt=20141102";
                 ++jj;
             }
             ++ii;
@@ -153,7 +136,7 @@ var kMapControl = {
         var jj = 0;
         for(var i = viewtiles.starty; i < viewtiles.endy; ++i){
             for(var j = viewtiles.startx; j < viewtiles.endx; ++j){
-                kMapControl.setImg({
+              /*  kMapControl.setImg({
                     container : kMap.name,
                     width : "256px",
                     height : "256px",
@@ -161,7 +144,7 @@ var kMapControl = {
                     left : (jj*256-pixeloutside.width)+"px",
                     src : "http://online1.map.bdimg.com/tile/?qt=tile&x=0&y=0&z=4&styles=pl&udt=20141102"
                 });
-                ++jj;
+                ++jj;*/
             }
             ++ii;
             jj = 0;
