@@ -26,6 +26,7 @@ var kMapControl = {
     },
 
     container : {
+        name : null,
         div : {},
         img : {},
         cellcount : 0,
@@ -77,6 +78,14 @@ var kMapControl = {
         }
         this.container.ycount = height;
         this.container.cellcount = height*width;
+        this.container.name = container;
+    },
+
+    initMapControlEventHandler : function () {
+        var div = document.getElementById(this.container.name);
+        this.eventutil.addHandler(div, "mousedown", this.onmousedown);
+        this.eventutil.addHandler(div, "mousemove", this.onmousemove);
+        this.eventutil.addHandler(div, "mouseup", this.onmouseup);
     },
 
     setMap : function(mapproperty){
@@ -85,6 +94,7 @@ var kMapControl = {
         var center = mapproperty.center;
         var pixelbounds = mapproperty.pixelbounds;
         kMap.setMap(container, center, level);
+
         kMap.setPixelBounds(pixelbounds.left, pixelbounds.top,pixelbounds.right, pixelbounds.bottom);
         kMap.getViewBounds();
         var viewtiles = kMap.getViewTiles();
@@ -109,42 +119,71 @@ var kMapControl = {
 
     eventutil : {
         addHandler : function(element, type, handler){
-            if(element.addEventListener){
-                element.addEventListener(type, handler, false);
-            }else if(element.attachEvent){
-                element.attachEvent("on"+type, handler);
-            }else {
-                element["on"+type] = handler;
+            if(element){
+                if(element.addEventListener){
+                    element.addEventListener(type, handler, false);
+                }else if(element.attachEvent){
+                    element.attachEvent("on"+type, handler);
+                }else {
+                    element["on"+type] = handler;
+                }
             }
         },
 
         removeHandler : function(element, type, handler){
-            if(element.removeEventListener){
-                element.removeEventListener(type, handler, false);
-            }else if(element.detachEvent){
-                element.detachEvent("on"+type, handler);
-            }else{
-                element["on"+type] = null;
+            if(element){
+                if(element.removeEventListener){
+                    element.removeEventListener(type, handler, false);
+                }else if(element.detachEvent){
+                    element.detachEvent("on"+type, handler);
+                }else{
+                    element["on"+type] = null;
+                }
             }
         }
     },
 
-    refreshMap : function(){
+    onmousemove : function (ev) {
+        ev = ev || event;
+        this.mousemovepos.x = ev.clientX;
+        this.mousemovepos.y = ev.clientY;
+        this.action |=this.mousemove;
+        this.pan({
+            x : (this.mousemovepos.x - this.mousedownpos.x),
+            y : (this.mousemovepos.y - this.mousedownpos.y)
+        });
+    },
+
+    onmousedown : function(ev){
+        ev = ev || event;
+        console.log(this.mousedownpos);
+        this.mousedownpos.x = ev.clientX;
+        this.mousedownpos.y = ev.clientY;
+        this.action |= this.mousedown;
+
+        return false;
+    },
+
+    onmouseup : function(ev){
+        ev = ev || event;
+        this.action |= this.mouseup;
+        this.action &= ~this.mousedown;
+    }
+
+   /* refreshMap : function(){
         var viewtiles = kMap.viewtiles;
         var pixeloutside = kMap.pixeloutside;
         var ii = 0;
         var jj = 0;
         for(var i = viewtiles.starty; i < viewtiles.endy; ++i){
             for(var j = viewtiles.startx; j < viewtiles.endx; ++j){
-              /*  kMapControl.setImg({
-                    container : kMap.name,
-                    width : "256px",
-                    height : "256px",
-                    top : (ii*256-pixeloutside.height)+"px",
-                    left : (jj*256-pixeloutside.width)+"px",
-                    src : "http://online1.map.bdimg.com/tile/?qt=tile&x=0&y=0&z=4&styles=pl&udt=20141102"
-                });
-                ++jj;*/
+                kMapControl.container.img[jj.toString()+ii.toString()].style.position = "absolute";
+                kMapControl.container.img[jj.toString()+ii.toString()].style.width = "256px";
+                kMapControl.container.img[jj.toString()+ii.toString()].style.height = "256px";
+                kMapControl.container.img[jj.toString()+ii.toString()].style.top = (ii*256-pixeloutside.height).toString()+"px";
+                kMapControl.container.img[jj.toString()+ii.toString()].style.left = (jj*256-pixeloutside.width).toString()+"px";
+                kMapControl.container.img[jj.toString()+ii.toString()].src = "http://online1.map.bdimg.com/tile/?qt=tile&x=0&y=0&z=4&styles=pl&udt=20141102";
+                ++jj;
             }
             ++ii;
             jj = 0;
@@ -156,32 +195,8 @@ var kMapControl = {
         kMap.pan(pixeloffset);
 
         this.refreshMap();
-    },
+    }*/
 
-    onmousemove : function (ev) {
-        ev = ev || event;
-        this.mousemovepos.x = ev.x;
-        this.mousedownpos.y = ev.y;
-        this.action |=this.mousemove;
-        this.pan({
-            x : (this.mousemovepos.x - this.mousedownpos.x),
-            y : (this.mousemovepos.y - this.mousedownpos.y)
-        });
-    },
-
-    onmousedown : function(ev){
-        ev = ev || window.event;
-        this.mousedownpos.x = ev.clientX;
-        this.mousedownpos.y = ev.clientY;
-        this.action |= this.mousedown;
-
-    },
-
-    onmouseup : function(ev){
-        ev = ev || event;
-        this.action |= this.mouseup;
-        this.action &= ~this.mousedown;
-    }
 };
 
 $(window).load(function(){
@@ -190,6 +205,7 @@ $(window).load(function(){
         imagesize : 256,
         container : "div1"
     });
+
     kMapControl.setMap({
         container : "div1",
         level : 20,
@@ -205,10 +221,12 @@ $(window).load(function(){
         }
     });
 
+    kMapControl.initMapControlEventHandler();
     console.log(document.getElementById("div1"));
 
  });
 
+/*
 $(window).resize(function(){
     kMapControl.setMap({
         container : "div1",
@@ -225,21 +243,4 @@ $(window).resize(function(){
         }
     });
 });
-
-$(document).mousedown(function(ev){
-    //kMapControl.onmousedown(ev);
-    console.log("mousedown");
-});
-
-$(document).mousemove(function(ev){
-    //kMapControl.onmousemove(ev);
-    console.log("mousemove")
-});
-
-$(document).mouseup(function(ev){
-//    kMapControl.onmouseup(ev);
-    console.log("mouseup");
-});
-
-
-
+*/
