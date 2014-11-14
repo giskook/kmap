@@ -142,29 +142,29 @@ var kMap = {
 
     pan : function (pixeloffset) {
         var offsetx = pixeloffset.x-this.pixeloutside.width;
-        var detalx = Math.floor(offsetx/256);
-        var detalpixelx = Math.ceil(offsetx%256);
+        var deltax = Math.floor(offsetx/256);
+        var deltapixelx = Math.ceil(offsetx%256);
         var offsety = pixeloffset.y-this.pixeloutside.height;
-        var detaly = Math.floor(offsety/256);
-        var detalpixely = Math.ceil(offsety%256);
-        this.viewtiles.startx += detalx;
-        this.viewtiles.endx += detalx;
-        this.viewtiles.starty += detaly;
-        this.viewtiles.endy += detaly;
-        if(detalpixelx > 0){
+        var deltay = Math.floor(offsety/256);
+        var deltapixely = Math.ceil(offsety%256);
+        this.viewtiles.startx += deltax;
+        this.viewtiles.endx += deltax;
+        this.viewtiles.starty += deltay;
+        this.viewtiles.endy += deltay;
+        if(deltapixelx > 0){
             this.viewtiles.startx--;
             this.viewtiles.endx--;
-            this.pixeloutside.width = 256-detalpixelx;
-        }else if(detalpixelx <= 0){
-            this.pixeloutside.width = -detalpixelx;
+            this.pixeloutside.width = 256-deltapixelx;
+        }else if(deltapixelx <= 0){
+            this.pixeloutside.width = -deltapixelx;
         }
 
-        if(detalpixely > 0){
+        if(deltapixely > 0){
             this.viewtiles.starty--;
             this.viewtiles.endy--;
-            this.pixeloutside.height = 256-detalpixely;
-        }else if(detalpixely <= 0){
-            this.pixeloutside.height = -detalpixely;
+            this.pixeloutside.height = 256-deltapixely;
+        }else if(deltapixely <= 0){
+            this.pixeloutside.height = -deltapixely;
         }
 
     },

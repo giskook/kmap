@@ -9,9 +9,11 @@ var kMapControl = {
 
     mousemove : 4,
 
-    click : 8,
+    mousewheel : 8,
 
-    dbclick : 16,
+    click : 16,
+
+    dbclick : 32,
 
     action : 0,
 
@@ -37,8 +39,9 @@ var kMapControl = {
     initMap : function(controlproperty){
         var imgsize = controlproperty.imagesize;
         var container = controlproperty.container;
-        var width = Math.ceil((document.documentElement.clientWidth+imgsize*2)/imgsize);
-        var height = Math.ceil((document.documentElement.clientHeight+imgsize*2)/imgsize);
+        var width = Math.ceil((screen.width+imgsize*2)/imgsize);
+        var height = Math.ceil((screen.height+imgsize*2)/imgsize);
+
         if(width > this.container.xcount){
             for(var i = this.container.xcount; i < width; ++i){
                 for(var j = 0; j < height; ++j){
@@ -86,6 +89,7 @@ var kMapControl = {
         var div = document.getElementById(this.container.name);
         kMapControl.eventutil.addHandler(div, "mousedown", kMapControl.onmousedown);
         kMapControl.eventutil.addHandler(div, "mousemove", kMapControl.onmousemove);
+        kMapControl.eventutil.addHandler(div, "mousewheel", kMapControl.onmousewheel);
         kMapControl.eventutil.addHandler(document, "mouseup", kMapControl.onmouseup);
     },
 
@@ -116,8 +120,6 @@ var kMapControl = {
             ++ii;
             jj = 0;
         }
-        console.log(viewtiles);
-        console.log(pixeloutside);
     },
 
     eventutil : {
@@ -183,11 +185,14 @@ var kMapControl = {
         return false;
     },
 
+    onmousewheel : function(ev){
+        ev = ev || event;
+        kMapControl.action |= kMapControl.mousewheel;
+    },
+
     refreshMap : function(){
         var viewtiles = kMap.viewtiles;
         var pixeloutside = kMap.pixeloutside;
-        console.log(viewtiles);
-        console.log(pixeloutside);
         var ii = 0;
         var jj = 0;
         for(var i = viewtiles.starty; i <= viewtiles.endy; ++i){
@@ -231,27 +236,8 @@ $(window).load(function(){
         pixelbounds : {
             left: document.documentElement.clientLeft,
             top : document.documentElement.clientTop,
-            right : document.documentElement.clientLeft + document.documentElement.clientWidth,
-            bottom : document.documentElement.clientTop + document.documentElement.clientHeight
+            right : document.documentElement.clientLeft + screen.width,
+            bottom : document.documentElement.clientTop + screen.height
         }
     });
  });
-
-/*
-$(window).resize(function(){
-    kMapControl.setMap({
-        container : "div1",
-        level : 20,
-        center : {
-            x : 127,
-            y : 34
-        },
-        pixelbounds : {
-            left: document.documentElement.clientLeft,
-            top : document.documentElement.clientTop,
-            right : document.documentElement.clientLeft + document.documentElement.clientWidth,
-            bottom : document.documentElement.clientTop + document.documentElement.clientHeight
-        }
-    });
-});
-*/
