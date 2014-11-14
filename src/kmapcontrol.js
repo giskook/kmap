@@ -37,8 +37,8 @@ var kMapControl = {
     initMap : function(controlproperty){
         var imgsize = controlproperty.imagesize;
         var container = controlproperty.container;
-        var width = Math.floor((document.documentElement.clientWidth+imgsize*2)/imgsize);
-        var height = Math.floor((document.documentElement.clientHeight+imgsize*2)/imgsize);
+        var width = Math.ceil((document.documentElement.clientWidth+imgsize*2)/imgsize);
+        var height = Math.ceil((document.documentElement.clientHeight+imgsize*2)/imgsize);
         if(width > this.container.xcount){
             for(var i = this.container.xcount; i < width; ++i){
                 for(var j = 0; j < height; ++j){
@@ -57,7 +57,7 @@ var kMapControl = {
                 }
             }
         }
-        this.container.width = width;
+        this.container.xcount = width;
 
         if(height > this.container.ycount){
             for(var i = 0; i < width; ++i){
@@ -79,13 +79,14 @@ var kMapControl = {
         this.container.ycount = height;
         this.container.cellcount = height*width;
         this.container.name = container;
+
     },
 
     initMapControlEventHandler : function () {
         var div = document.getElementById(this.container.name);
-        this.eventutil.addHandler(div, "mousedown", this.onmousedown);
-        this.eventutil.addHandler(div, "mousemove", this.onmousemove);
-        this.eventutil.addHandler(div, "mouseup", this.onmouseup);
+        kMapControl.eventutil.addHandler(div, "mousedown", kMapControl.onmousedown);
+        kMapControl.eventutil.addHandler(div, "mousemove", kMapControl.onmousemove);
+        kMapControl.eventutil.addHandler(document, "mouseup", kMapControl.onmouseup);
     },
 
     setMap : function(mapproperty){
@@ -102,8 +103,8 @@ var kMapControl = {
 
         var ii = 0;
         var jj = 0;
-        for(var i = viewtiles.starty; i < viewtiles.endy; ++i){
-            for(var j = viewtiles.startx; j < viewtiles.endx; ++j){
+        for(var i = viewtiles.starty; i <= viewtiles.endy; ++i){
+            for(var j = viewtiles.startx; j <= viewtiles.endx; ++j){
                 kMapControl.container.img[jj.toString()+ii.toString()].style.position = "absolute";
                 kMapControl.container.img[jj.toString()+ii.toString()].style.width = "256px";
                 kMapControl.container.img[jj.toString()+ii.toString()].style.height = "256px";
@@ -115,14 +116,16 @@ var kMapControl = {
             ++ii;
             jj = 0;
         }
+        console.log(viewtiles);
+        console.log(pixeloutside);
     },
 
     eventutil : {
         addHandler : function(element, type, handler){
             if(element){
-                if(element.addEventListener){
+                if(element.addEventListener && false){
                     element.addEventListener(type, handler, false);
-                }else if(element.attachEvent){
+                }else if(element.attachEvent && false){
                     element.attachEvent("on"+type, handler);
                 }else {
                     element["on"+type] = handler;
@@ -132,9 +135,9 @@ var kMapControl = {
 
         removeHandler : function(element, type, handler){
             if(element){
-                if(element.removeEventListener){
+                if(element.removeEventListener && false){
                     element.removeEventListener(type, handler, false);
-                }else if(element.detachEvent){
+                }else if(element.detachEvent && false){
                     element.detachEvent("on"+type, handler);
                 }else{
                     element["on"+type] = null;
@@ -145,38 +148,50 @@ var kMapControl = {
 
     onmousemove : function (ev) {
         ev = ev || event;
-        this.mousemovepos.x = ev.clientX;
-        this.mousemovepos.y = ev.clientY;
-        this.action |=this.mousemove;
-        this.pan({
-            x : (this.mousemovepos.x - this.mousedownpos.x),
-            y : (this.mousemovepos.y - this.mousedownpos.y)
-        });
+
+        kMapControl.mousemovepos.x = ev.clientX;
+        kMapControl.mousemovepos.y = ev.clientY;
+        kMapControl.action |=kMapControl.mousemove;
+
+        if(kMapControl.action & kMapControl.mousedown){
+            kMapControl.pan({
+                x : (kMapControl.mousemovepos.x - kMapControl.mousedownpos.x),
+                y : (kMapControl.mousemovepos.y - kMapControl.mousedownpos.y)
+            });
+            kMapControl.mousedownpos.x = kMapControl.mousemovepos.x;
+            kMapControl.mousedownpos.y = kMapControl.mousemovepos.y;
+        }
+
+        return false;
     },
 
     onmousedown : function(ev){
         ev = ev || event;
-        console.log(this.mousedownpos);
-        this.mousedownpos.x = ev.clientX;
-        this.mousedownpos.y = ev.clientY;
-        this.action |= this.mousedown;
+
+        kMapControl.mousedownpos.x = ev.clientX;
+        kMapControl.mousedownpos.y = ev.clientY;
+        kMapControl.action |= kMapControl.mousedown;
 
         return false;
     },
 
     onmouseup : function(ev){
         ev = ev || event;
-        this.action |= this.mouseup;
-        this.action &= ~this.mousedown;
-    }
+        kMapControl.action |= kMapControl.mouseup;
+        kMapControl.action &= ~kMapControl.mousedown;
 
-   /* refreshMap : function(){
+        return false;
+    },
+
+    refreshMap : function(){
         var viewtiles = kMap.viewtiles;
         var pixeloutside = kMap.pixeloutside;
+        console.log(viewtiles);
+        console.log(pixeloutside);
         var ii = 0;
         var jj = 0;
-        for(var i = viewtiles.starty; i < viewtiles.endy; ++i){
-            for(var j = viewtiles.startx; j < viewtiles.endx; ++j){
+        for(var i = viewtiles.starty; i <= viewtiles.endy; ++i){
+            for(var j = viewtiles.startx; j <= viewtiles.endx; ++j){
                 kMapControl.container.img[jj.toString()+ii.toString()].style.position = "absolute";
                 kMapControl.container.img[jj.toString()+ii.toString()].style.width = "256px";
                 kMapControl.container.img[jj.toString()+ii.toString()].style.height = "256px";
@@ -191,12 +206,11 @@ var kMapControl = {
     },
 
     pan : function(pixeloffset){
-
         kMap.pan(pixeloffset);
+        kMapControl.refreshMap();
 
-        this.refreshMap();
-    }*/
-
+        return false;
+    }
 };
 
 $(window).load(function(){
@@ -205,13 +219,14 @@ $(window).load(function(){
         imagesize : 256,
         container : "div1"
     });
+    kMapControl.initMapControlEventHandler();
 
     kMapControl.setMap({
         container : "div1",
         level : 20,
         center : {
             x : 127,
-            y : 34
+            y : 34.5
         },
         pixelbounds : {
             left: document.documentElement.clientLeft,
@@ -220,10 +235,6 @@ $(window).load(function(){
             bottom : document.documentElement.clientTop + document.documentElement.clientHeight
         }
     });
-
-    kMapControl.initMapControlEventHandler();
-    console.log(document.getElementById("div1"));
-
  });
 
 /*
