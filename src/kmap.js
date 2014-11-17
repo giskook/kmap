@@ -169,6 +169,48 @@ var kMap = {
 
     },
 
+    zoomin : function(anchor){
+        var oldlevel = this.viewtiles.level;
+        this.viewtiles.level = kMap.level;
+        var oldleft = 256*this.viewtiles.startx - this.pixeloutside.width;
+        var oldtop = 256*this.viewtiles.starty - this.pixeloutside.height;
+        var anchorx = oldleft + anchor.x;
+        var anchory = oldtop + anchor.y;
+        var newanchorx = Math.floor(this.worldpixels[kMap.level] * anchorx / this.worldpixels[oldlevel]);
+        var newanchory = Math.floor(this.worldpixels[kMap.level] * anchory / this.worldpixels[oldlevel]);
+
+        var left = newanchorx - anchor.x;
+        var right = left + this.pixelbounds.right;
+        /*var top = newanchory - anchor.y;
+        var bo = bottom - this.pixelbounds.bottom;*/
+
+        this.viewtiles.startx = Math.floor(left / 256);
+        this.viewtiles.endx = Math.ceil(right / 256);
+        this.viewtiles.starty = Math.floor(top / 256);
+        this.viewtiles.endy = Math.ceil(bottom / 256);
+
+        this.pixeloutside.width = 256 - left % 256;
+        this.pixeloutside.height = 256 - top % 256;
+
+        /*var centerx = Math.floor(this.worldpixels[kMap.level] * this.center.x / this.worldpixels[oldlevel]);
+        var centery = Math.floor(this.worldpixels[kMap.level] * this.center.y / this.worldpixels[oldlevel]);
+        this.center.x = centerx;
+        this.center.y = centery;
+        var left, top, bottom, right;
+        left = centerx - Math.floor(this.pixelbounds.right + 1);
+        right = left + this.pixelbounds.right;
+        bottom = centery - Math.floor(this.pixelbounds.bottom + 1);
+        top = bottom + this.pixelbounds.bottom;
+
+        this.viewtiles.startx = Math.floor(left / 256);
+        this.viewtiles.endx = Math.ceil(right / 256);
+        this.viewtiles.starty = Math.floor(top / 256);
+        this.viewtiles.endy = Math.ceil(bottom / 256);
+
+        this.pixeloutside.width = 256 - left % 256;
+        this.pixeloutside.height = 256 - top % 256;*/
+    },
+
     getTileURL : function(){
 
     }

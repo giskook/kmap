@@ -3,58 +3,58 @@
  */
 var kMapControl = {
 
-    mousedown : 1,
+    mousedown: 1,
 
-    mouseup : 2,
+    mouseup: 2,
 
-    mousemove : 4,
+    mousemove: 4,
 
-    mousewheel : 8,
+    mousewheel: 8,
 
-    click : 16,
+    click: 16,
 
-    dbclick : 32,
+    dbclick: 32,
 
-    action : 0,
+    action: 0,
 
-    mousedownpos : {
-        x : 0,
-        y : 0
+    mousedownpos: {
+        x: 0,
+        y: 0
     },
 
-    mousemovepos : {
-        x : 0,
-        y : 0
+    mousemovepos: {
+        x: 0,
+        y: 0
     },
 
-    container : {
-        name : null,
-        div : {},
-        img : {},
-        cellcount : 0,
-        xcount : 0,
-        ycount : 0
+    container: {
+        name: null,
+        div: {},
+        img: {},
+        cellcount: 0,
+        xcount: 0,
+        ycount: 0
     },
 
-    initMap : function(controlproperty){
+    initMap: function (controlproperty) {
         var imgsize = controlproperty.imagesize;
         var container = controlproperty.container;
-        var width = Math.ceil((screen.width+imgsize*2)/imgsize);
-        var height = Math.ceil((screen.height+imgsize*2)/imgsize);
+        var width = Math.ceil((screen.width + imgsize * 2) / imgsize);
+        var height = Math.ceil((screen.height + imgsize * 2) / imgsize);
 
-        if(width > this.container.xcount){
-            for(var i = this.container.xcount; i < width; ++i){
-                for(var j = 0; j < height; ++j){
-                    if(typeof this.container.div[i.toString() + j.toString()] === "undefined"){
+        if (width > this.container.xcount) {
+            for (var i = this.container.xcount; i < width; ++i) {
+                for (var j = 0; j < height; ++j) {
+                    if (typeof this.container.div[i.toString() + j.toString()] === "undefined") {
                         this.container.div[i.toString() + j.toString()] = document.createElement("div");
                         document.getElementById(container).appendChild(this.container.div[i.toString() + j.toString()]);
                     }
-                    if(typeof this.container.img[i.toString() + j.toString()] === "undefined" ){
+                    if (typeof this.container.img[i.toString() + j.toString()] === "undefined") {
                         this.container.img[i.toString() + j.toString()] = document.createElement("img");
                     }
                     this.container.div[i.toString() + j.toString()].id = i.toString() + j.toString();
                     this.container.img[i.toString() + j.toString()].id = i.toString() + j.toString();
-                    if(this.container.div[i.toString() + j.toString()].hasChildNodes() === false){
+                    if (this.container.div[i.toString() + j.toString()].hasChildNodes() === false) {
                         this.container.div[i.toString() + j.toString()].appendChild(this.container.img[i.toString() + j.toString()]);
                     }
                 }
@@ -62,59 +62,60 @@ var kMapControl = {
         }
         this.container.xcount = width;
 
-        if(height > this.container.ycount){
-            for(var i = 0; i < width; ++i){
-                for(var j = this.container.ycount; i < height; ++i){
-                    if(typeof this.container.div[i.toString() + j.toString()] === "undefined"){
+        if (height > this.container.ycount) {
+            for (var i = 0; i < width; ++i) {
+                for (var j = this.container.ycount; i < height; ++i) {
+                    if (typeof this.container.div[i.toString() + j.toString()] === "undefined") {
                         this.container.div[i.toString() + j.toString()] = document.createElement("div");
                     }
-                    if(typeof this.container.img[i.toString() + j.toString()] === "undefined" ){
+                    if (typeof this.container.img[i.toString() + j.toString()] === "undefined") {
                         this.container.img[i.toString() + j.toString()] = document.createElement("img");
                     }
                     this.container.div[i.toString() + j.toString()].id = i.toString() + j.toString();
                     this.container.img[i.toString() + j.toString()].id = i.toString() + j.toString();
-                    if(this.container.div[i.toString() + j.toString()].hasChildNodes() === false){
+                    if (this.container.div[i.toString() + j.toString()].hasChildNodes() === false) {
                         this.container.div[i.toString() + j.toString()].appendChild(this.container.img[i.toString() + j.toString()]);
                     }
                 }
             }
         }
         this.container.ycount = height;
-        this.container.cellcount = height*width;
+        this.container.cellcount = height * width;
         this.container.name = container;
 
     },
 
-    initMapControlEventHandler : function () {
+    initMapControlEventHandler: function () {
         var div = document.getElementById(this.container.name);
-        kMapControl.eventutil.addHandler(div, "mousedown", kMapControl.onmousedown);
-        kMapControl.eventutil.addHandler(div, "mousemove", kMapControl.onmousemove);
+        kMapControl.eventutil.addHandler(div, "mousedown", kMapControl.onmousedown, true);
+        kMapControl.eventutil.addHandler(div, "mousemove", kMapControl.onmousemove, true);
+//        var mousewheelevt=(/Firefox/i.test(navigator.userAgent))? "DOMMouseScroll" : "mousewheel";
         kMapControl.eventutil.addHandler(div, "mousewheel", kMapControl.onmousewheel);
-        kMapControl.eventutil.addHandler(document, "mouseup", kMapControl.onmouseup);
+        kMapControl.eventutil.addHandler(document, "mouseup", kMapControl.onmouseup, true);
     },
 
-    setMap : function(mapproperty){
+    setMap: function (mapproperty) {
         var container = mapproperty.container;
         var level = mapproperty.level;
         var center = mapproperty.center;
         var pixelbounds = mapproperty.pixelbounds;
         kMap.setMap(container, center, level);
 
-        kMap.setPixelBounds(pixelbounds.left, pixelbounds.top,pixelbounds.right, pixelbounds.bottom);
+        kMap.setPixelBounds(pixelbounds.left, pixelbounds.top, pixelbounds.right, pixelbounds.bottom);
         kMap.getViewBounds();
         var viewtiles = kMap.getViewTiles();
         var pixeloutside = kMap.getPixelOutSide();
 
         var ii = 0;
         var jj = 0;
-        for(var i = viewtiles.starty; i <= viewtiles.endy; ++i){
-            for(var j = viewtiles.startx; j <= viewtiles.endx; ++j){
-                kMapControl.container.img[jj.toString()+ii.toString()].style.position = "absolute";
-                kMapControl.container.img[jj.toString()+ii.toString()].style.width = "256px";
-                kMapControl.container.img[jj.toString()+ii.toString()].style.height = "256px";
-                kMapControl.container.img[jj.toString()+ii.toString()].style.top = (ii*256-pixeloutside.height).toString()+"px";
-                kMapControl.container.img[jj.toString()+ii.toString()].style.left = (jj*256-pixeloutside.width).toString()+"px";
-                kMapControl.container.img[jj.toString()+ii.toString()].src = "http://online1.map.bdimg.com/tile/?qt=tile&x=0&y=0&z=4&styles=pl&udt=20141102";
+        for (var i = viewtiles.starty; i <= viewtiles.endy; ++i) {
+            for (var j = viewtiles.startx; j <= viewtiles.endx; ++j) {
+                kMapControl.container.img[jj.toString() + ii.toString()].style.position = "absolute";
+                kMapControl.container.img[jj.toString() + ii.toString()].style.width = "256px";
+                kMapControl.container.img[jj.toString() + ii.toString()].style.height = "256px";
+                kMapControl.container.img[jj.toString() + ii.toString()].style.top = (ii * 256 - pixeloutside.height).toString() + "px";
+                kMapControl.container.img[jj.toString() + ii.toString()].style.left = (jj * 256 - pixeloutside.width).toString() + "px";
+                kMapControl.container.img[jj.toString() + ii.toString()].src = "http://online1.map.bdimg.com/tile/?qt=tile&x=0&y=0&z=4&styles=pl&udt=20141102";
                 ++jj;
             }
             ++ii;
@@ -122,43 +123,53 @@ var kMapControl = {
         }
     },
 
-    eventutil : {
-        addHandler : function(element, type, handler){
-            if(element){
-                if(element.addEventListener && false){
-                    element.addEventListener(type, handler, false);
-                }else if(element.attachEvent && false){
-                    element.attachEvent("on"+type, handler);
-                }else {
-                    element["on"+type] = handler;
+    eventutil: {
+        addHandler: function (element, type, handler, tradition) {
+            if (element) {
+                if (tradition) {
+                    element["on" + type] = handler;
+                } else {
+                    if (element.addEventListener) {
+                        element.addEventListener(type, handler, false);
+                    } else if (element.attachEvent) {
+                        element.attachEvent("on" + type, handler);
+                    } else {
+                        element["on" + type] = handler;
+                    }
                 }
+
             }
         },
 
-        removeHandler : function(element, type, handler){
-            if(element){
-                if(element.removeEventListener && false){
-                    element.removeEventListener(type, handler, false);
-                }else if(element.detachEvent && false){
-                    element.detachEvent("on"+type, handler);
-                }else{
-                    element["on"+type] = null;
+        removeHandler: function (element, type, handler, tradition) {
+            if (element) {
+                if (tradition) {
+                    element["on" + type] = null;
+                } else {
+                    if (element.removeEventListener) {
+                        element.removeEventListener(type, handler, false);
+                    } else if (element.detachEvent) {
+                        element.detachEvent("on" + type, handler);
+                    } else {
+                        element["on" + type] = null;
+                    }
                 }
+
             }
         }
     },
 
-    onmousemove : function (ev) {
+    onmousemove: function (ev) {
         ev = ev || event;
 
         kMapControl.mousemovepos.x = ev.clientX;
         kMapControl.mousemovepos.y = ev.clientY;
-        kMapControl.action |=kMapControl.mousemove;
+        kMapControl.action |= kMapControl.mousemove;
 
-        if(kMapControl.action & kMapControl.mousedown){
+        if (kMapControl.action & kMapControl.mousedown) {
             kMapControl.pan({
-                x : (kMapControl.mousemovepos.x - kMapControl.mousedownpos.x),
-                y : (kMapControl.mousemovepos.y - kMapControl.mousedownpos.y)
+                x: (kMapControl.mousemovepos.x - kMapControl.mousedownpos.x),
+                y: (kMapControl.mousemovepos.y - kMapControl.mousedownpos.y)
             });
             kMapControl.mousedownpos.x = kMapControl.mousemovepos.x;
             kMapControl.mousedownpos.y = kMapControl.mousemovepos.y;
@@ -167,7 +178,7 @@ var kMapControl = {
         return false;
     },
 
-    onmousedown : function(ev){
+    onmousedown: function (ev) {
         ev = ev || event;
 
         kMapControl.mousedownpos.x = ev.clientX;
@@ -177,7 +188,7 @@ var kMapControl = {
         return false;
     },
 
-    onmouseup : function(ev){
+    onmouseup: function (ev) {
         ev = ev || event;
         kMapControl.action |= kMapControl.mouseup;
         kMapControl.action &= ~kMapControl.mousedown;
@@ -185,24 +196,38 @@ var kMapControl = {
         return false;
     },
 
-    onmousewheel : function(ev){
+    onmousewheel: function (ev) {
         ev = ev || event;
+
         kMapControl.action |= kMapControl.mousewheel;
+        if (ev.wheelDelta > 0) {
+            kMapControl.zoomin({
+                x: ev.clientX,
+                y: ev.clientY
+            });
+        } else if (ev.wheelDelta < 0) {
+            kMapControl.zoomout({
+                x: ev.clientX,
+                y: ev.clientY
+            });
+        }
     },
 
-    refreshMap : function(){
+    refreshMap: function () {
         var viewtiles = kMap.viewtiles;
         var pixeloutside = kMap.pixeloutside;
+        console.log(viewtiles);
+        console.log(pixeloutside);
         var ii = 0;
         var jj = 0;
-        for(var i = viewtiles.starty; i <= viewtiles.endy; ++i){
-            for(var j = viewtiles.startx; j <= viewtiles.endx; ++j){
-                kMapControl.container.img[jj.toString()+ii.toString()].style.position = "absolute";
-                kMapControl.container.img[jj.toString()+ii.toString()].style.width = "256px";
-                kMapControl.container.img[jj.toString()+ii.toString()].style.height = "256px";
-                kMapControl.container.img[jj.toString()+ii.toString()].style.top = (ii*256-pixeloutside.height).toString()+"px";
-                kMapControl.container.img[jj.toString()+ii.toString()].style.left = (jj*256-pixeloutside.width).toString()+"px";
-                kMapControl.container.img[jj.toString()+ii.toString()].src = "http://online1.map.bdimg.com/tile/?qt=tile&x=0&y=0&z=4&styles=pl&udt=20141102";
+        for (var i = viewtiles.starty; i <= viewtiles.endy; ++i) {
+            for (var j = viewtiles.startx; j <= viewtiles.endx; ++j) {
+                kMapControl.container.img[jj.toString() + ii.toString()].style.position = "absolute";
+                kMapControl.container.img[jj.toString() + ii.toString()].style.width = "256px";
+                kMapControl.container.img[jj.toString() + ii.toString()].style.height = "256px";
+                kMapControl.container.img[jj.toString() + ii.toString()].style.top = (ii * 256 - pixeloutside.height).toString() + "px";
+                kMapControl.container.img[jj.toString() + ii.toString()].style.left = (jj * 256 - pixeloutside.width).toString() + "px";
+                kMapControl.container.img[jj.toString() + ii.toString()].src = "http://online1.map.bdimg.com/tile/?qt=tile&x=0&y=0&z=4&styles=pl&udt=20141102";
                 ++jj;
             }
             ++ii;
@@ -210,12 +235,35 @@ var kMapControl = {
         }
     },
 
-    pan : function(pixeloffset){
+    pan: function (pixeloffset) {
         kMap.pan(pixeloffset);
         kMapControl.refreshMap();
 
         return false;
+    },
+
+    zoomin: function (anchor) {
+        var prelevel = kMap.level;
+        kMap.level++;
+        if (kMap.level > kMap.levels[kMap.levels.length - 1]) {
+            kMap.level = kMap.levels[kMap.levels.length - 1];
+        }
+        if (prelevel != kMap.level) {
+            kMap.zoomin(anchor);
+            kMapControl.refreshMap();
+        }
+    },
+
+    zoomout: function () {
+        var prelevel = kMap.level;
+        kMap.level--;
+        if (kMap.level < kMap.levels[0]){
+            kMap.level = kMap.levels[0];
+        }
+
+
     }
+
 };
 
 $(window).load(function(){
@@ -228,7 +276,7 @@ $(window).load(function(){
 
     kMapControl.setMap({
         container : "div1",
-        level : 20,
+        level : 10,
         center : {
             x : 127,
             y : 34.5
