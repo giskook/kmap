@@ -216,8 +216,6 @@ var kMapControl = {
     refreshMap: function () {
         var viewtiles = kMap.viewtiles;
         var pixeloutside = kMap.pixeloutside;
-        console.log(viewtiles);
-        console.log(pixeloutside);
         var ii = 0;
         var jj = 0;
         for (var i = viewtiles.starty; i <= viewtiles.endy; ++i) {
@@ -249,21 +247,22 @@ var kMapControl = {
             kMap.level = kMap.levels[kMap.levels.length - 1];
         }
         if (prelevel != kMap.level) {
-            kMap.zoomin(anchor);
+            kMap.zoom(anchor);
             kMapControl.refreshMap();
         }
     },
 
-    zoomout: function () {
+    zoomout: function (anchor) {
         var prelevel = kMap.level;
         kMap.level--;
         if (kMap.level < kMap.levels[0]){
             kMap.level = kMap.levels[0];
         }
-
-
+        if(prelevel != kMap.level){
+            kMap.zoom(anchor);
+            kMapControl.refreshMap();
+        }
     }
-
 };
 
 $(window).load(function(){
